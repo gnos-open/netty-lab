@@ -12,6 +12,8 @@ import org.gnos.netty.lab.common.clients.WebSocketClient;
 import org.gnos.netty.lab.common.packet.TcpPacket;
 import org.gnos.netty.lab.common.packet.UdpPacket;
 import org.gnos.netty.lab.common.packet.WebSocketPacket;
+import org.gnos.netty.lab.proto.client.message.ChatReq_103;
+import org.gnos.netty.lab.proto.client.message.LoginReq_102;
 import org.gnos.netty.lab.proto.client.message.TestReq_101;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,6 +67,24 @@ public class ConsoleSender {
                                 log.info("websocket packet sent successfully");
                             } else {
                                 log.error("websocket packet send failed:{}", cf);
+                            }
+                        });
+                    } else if ("tcpLogin".equalsIgnoreCase(msg)) {
+                        message = LoginReq_102.newBuilder().setToken("test-token").build();
+                        tcpClient.getChannel().writeAndFlush(new TcpPacket(message)).addListener(cf -> {
+                            if (cf.isSuccess()) {
+                                log.info("tcp packet sent successfully");
+                            } else {
+                                log.error("tcp packet send failed:{}", cf);
+                            }
+                        });
+                    } else if ("tcpChat".equalsIgnoreCase(msg)) {
+                        message = ChatReq_103.newBuilder().setChannel("group").setMessage("发个聊天消息").build();
+                        tcpClient.getChannel().writeAndFlush(new TcpPacket(message)).addListener(cf -> {
+                            if (cf.isSuccess()) {
+                                log.info("tcp packet sent successfully");
+                            } else {
+                                log.error("tcp packet send failed:{}", cf);
                             }
                         });
                     } else if ("print".equalsIgnoreCase(msg)) {
