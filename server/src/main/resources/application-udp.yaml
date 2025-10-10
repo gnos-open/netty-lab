@@ -1,0 +1,5 @@
+netty:
+  server:
+    udp:
+      enabled: true
+      port: 8082
