@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: mix # tcp/udp/websocket/mix
+    active: mix # http/tcp/udp/websocket/mix
 
 netty:
   proto:
