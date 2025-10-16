@@ -4,8 +4,9 @@ import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.gnos.netty.lab.common.enums.RestMethodType;
-import org.gnos.netty.lab.common.servers.http.anno.*;
-import org.gnos.netty.lab.common.servers.http.manager.*;
+import org.gnos.netty.lab.common.servers.http.anno.RestController;
+import org.gnos.netty.lab.common.servers.http.anno.RestMethod;
+import org.gnos.netty.lab.common.servers.http.manager.RestHandlerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;

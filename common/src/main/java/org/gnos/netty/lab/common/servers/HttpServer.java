@@ -35,15 +35,13 @@ public class HttpServer {
     @Autowired
     RestHandlerManager restHandlerManager;
 
-    private CorsConfig corsConfig = CorsConfig
+    private final CorsConfig corsConfig = CorsConfig
             .withAnyOrigin()
             .allowedRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS)
             .allowedRequestHeaders("Content-Type")//非简单头、自定义头需要允许
             .allowCredentials()
             .maxAge(3600)
             .build();
-
-    CorsConfig corsConfig2 = new CorsConfig.Builder().build();
 
     @PostConstruct
     void start() throws Exception {

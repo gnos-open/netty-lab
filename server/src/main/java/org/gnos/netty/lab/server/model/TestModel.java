@@ -1,4 +1,4 @@
-package org.gnos.netty.lab.server.handler;
+package org.gnos.netty.lab.server.model;
 
 import lombok.Data;
 

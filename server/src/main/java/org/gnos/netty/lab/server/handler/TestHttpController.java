@@ -3,15 +3,16 @@ package org.gnos.netty.lab.server.handler;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.gnos.netty.lab.common.servers.http.controller.AbstractHttpController;
 import org.gnos.netty.lab.common.servers.http.RestResult;
 import org.gnos.netty.lab.common.servers.http.anno.*;
-
-import static org.gnos.netty.lab.common.enums.RestMethodType.*;
-
+import org.gnos.netty.lab.common.servers.http.controller.AbstractHttpController;
+import org.gnos.netty.lab.server.model.TestBody;
+import org.gnos.netty.lab.server.model.TestModel;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+
+import static org.gnos.netty.lab.common.enums.RestMethodType.*;
 
 @Slf4j
 @Component

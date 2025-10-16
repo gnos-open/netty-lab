@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 public @interface HeaderMap {
 
     String value() default "";
-    
+
 }

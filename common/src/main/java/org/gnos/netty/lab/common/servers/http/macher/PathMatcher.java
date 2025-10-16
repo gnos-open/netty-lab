@@ -1,11 +1,14 @@
 package org.gnos.netty.lab.common.servers.http.macher;
 
-import org.gnos.netty.lab.common.servers.http.controller.HttpController;
 import org.gnos.netty.lab.common.servers.http.ParamInfo;
+import org.gnos.netty.lab.common.servers.http.controller.HttpController;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,27 +18,8 @@ import java.util.regex.Pattern;
 @Component
 public class PathMatcher {
 
-    public record HandleMethod(HttpController handler, Method method, ParamInfo[] paramInfos) {
-    }
-
-    /**
-     * 路径匹配结果
-     */
-    public record MatchResult(Map<String, String> pathVariables, HandleMethod handleMethod) {
-        public String getPathVariable(String name) {
-            return pathVariables.get(name);
-        }
-    }
-
-    /**
-     * 将路径模式转换为正则表达式并提取变量名
-     */
-    private record PatternInfo(Pattern regexPattern, List<String> variableNames) {
-    }
-
     // 缓存已编译的正则表达式模式
     private final Map<String, PatternInfo> patternCache = new HashMap<>();
-
 
     /**
      * 只匹配路径，用于options方法返回
@@ -155,6 +139,24 @@ public class PathMatcher {
 
         Pattern regexPattern = Pattern.compile(regexBuilder.toString());
         return new PatternInfo(regexPattern, variableNames);
+    }
+
+    public record HandleMethod(HttpController handler, Method method, ParamInfo[] paramInfos) {
+    }
+
+    /**
+     * 路径匹配结果
+     */
+    public record MatchResult(Map<String, String> pathVariables, HandleMethod handleMethod) {
+        public String getPathVariable(String name) {
+            return pathVariables.get(name);
+        }
+    }
+
+    /**
+     * 将路径模式转换为正则表达式并提取变量名
+     */
+    private record PatternInfo(Pattern regexPattern, List<String> variableNames) {
     }
 
 }
