@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.gnos.netty.lab.proto.client.message";
+option java_outer_classname = "ClientMessage";
+package message;
+
+message TestReq_101 {
+  string content = 1;
+  int32 type = 2;
+}
+
+message TestResp_101 {
+  string result = 1;
+  int32 code = 2;
+  string message = 3;
+}
+
+message LoginReq_102 {
+  string token = 1;
+}
+
+message LoginResp_102 {
+  string openId = 1;
+}
+
+message ChatReq_103 {
+  string channel = 1;
+  string message = 2;
+}
+
+message ChatResp_103 {
+  string error = 1;
+  string message = 2;
+}

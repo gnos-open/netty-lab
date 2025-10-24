@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>HTTP接口测试工具</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --gray-color: #95a5a6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: var(--dark-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+
+        .method-selector {
+            display: flex;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .method-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-right: 1px solid #ddd;
+        }
+
+        .method-option:last-child {
+            border-right: none;
+        }
+
+        .method-option:hover {
+            background: #f8f9fa;
+        }
+
+        .method-option.active {
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .response-section {
+            margin-top: 20px;
+        }
+
+        .response-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .status-code {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .status-2xx {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-4xx, .status-5xx {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .status-3xx {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .response-time {
+            color: var(--gray-color);
+        }
+
+        .response-body {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .headers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .headers-table th, .headers-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .headers-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: #f8f9fa;
+        }
+
+        .history-method {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.8rem;
+            margin-right: 8px;
+        }
+
+        .history-url {
+            font-weight: 500;
+        }
+
+        .history-status {
+            float: right;
+            font-size: 0.9rem;
+        }
+
+        .tab-container {
+            margin-top: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>HTTP接口测试工具</h1>
+        <p class="description">一个简单易用的HTTP接口测试页面，支持GET、POST、PUT、PATCH、DELETE、OPTIONS、HEAD等方法</p>
+    </header>
+
+    <div class="main-content">
+        <div class="left-panel">
+            <div class="panel">
+                <h2 class="panel-title">请求配置</h2>
+
+                <div class="form-group">
+                    <label for="url">请求URL</label>
+                    <input id="url" placeholder="http://localhost:8080/test" type="text"
+                           value="http://localhost:8080/test">
+                </div>
+
+                <div class="form-group">
+                    <label>HTTP方法</label>
+                    <div class="method-selector">
+                        <div class="method-option active" data-method="GET">GET</div>
+                        <div class="method-option" data-method="POST">POST</div>
+                        <div class="method-option" data-method="PUT">PUT</div>
+                        <div class="method-option" data-method="PATCH">PATCH</div>
+                        <div class="method-option" data-method="DELETE">DELETE</div>
+                        <div class="method-option" data-method="OPTIONS">OPTIONS</div>
+                        <div class="method-option" data-method="HEAD">HEAD</div>
+                    </div>
+                    <input id="method" type="hidden" value="GET">
+                </div>
+
+                <div class="form-group">
+                    <label for="headers">请求头 (每行一个，格式: HeaderName: Value)</label>
+                    <textarea id="headers">Content-Type: application/json
+Accept: application/json</textarea>
+                </div>
+
+                <div class="form-group" id="body-group">
+                    <label for="body">请求体</label>
+                    <textarea id="body" placeholder='{"name": "John", "email": "john@example.com"}'>{"message": "Hello, Server!"}</textarea>
+                </div>
+
+                <button class="btn btn-success btn-block" id="send-btn">发送请求</button>
+                <button class="btn btn-danger btn-block" id="clear-btn" style="margin-top: 10px;">清除历史</button>
+            </div>
+
+            <div class="panel">
+                <h2 class="panel-title">请求历史</h2>
+                <div id="history-list">
+                    <!-- 历史记录将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="panel">
+                <h2 class="panel-title">响应结果</h2>
+
+                <div class="response-info">
+                    <div>
+                        状态码: <span class="status-code" id="status-code">-</span>
+                    </div>
+                    <div class="response-time">
+                        响应时间: <span id="response-time">-</span> ms
+                    </div>
+                </div>
+
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="body">响应体</div>
+                        <div class="tab" data-tab="headers">响应头</div>
+                    </div>
+
+                    <div class="tab-content active" id="tab-body">
+                        <div class="response-body" id="response-body">
+                            // 响应内容将显示在这里
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-headers">
+                        <table class="headers-table" id="response-headers">
+                            <thead>
+                            <tr>
+                                <th>Header</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 响应头将在这里动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>HTTP接口测试工具 &copy; 2025 | 使用Fetch API实现</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 元素引用
+        const urlInput = document.getElementById('url');
+        const methodInput = document.getElementById('method');
+        const headersInput = document.getElementById('headers');
+        const bodyInput = document.getElementById('body');
+        const bodyGroup = document.getElementById('body-group');
+        const sendBtn = document.getElementById('send-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const statusCode = document.getElementById('status-code');
+        const responseTime = document.getElementById('response-time');
+        const responseBody = document.getElementById('response-body');
+        const responseHeaders = document.getElementById('response-headers').querySelector('tbody');
+        const historyList = document.getElementById('history-list');
+        const methodOptions = document.querySelectorAll('.method-option');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // 初始化历史记录
+        let requestHistory = JSON.parse(localStorage.getItem('httpTesterHistory')) || [];
+        renderHistory();
+
+        // 方法选择器事件
+        methodOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // 移除所有active类
+                methodOptions.forEach(opt => opt.classList.remove('active'));
+                // 添加active类到当前选项
+                this.classList.add('active');
+                // 更新隐藏的input值
+                methodInput.value = this.getAttribute('data-method');
+
+                // 对于GET和HEAD方法，隐藏请求体
+                if (methodInput.value === 'GET' || methodInput.value === 'DELETE' || methodInput.value === 'HEAD' || methodInput.value === 'OPTIONS') {
+                    bodyGroup.style.display = 'none';
+                } else {
+                    bodyGroup.style.display = 'block';
+                }
+            });
+        });
+
+        // 标签页切换
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+
+                // 移除所有active类
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                // 添加active类到当前标签
+                this.classList.add('active');
+                document.getElementById(`tab-${tabId}`).classList.add('active');
+            });
+        });
+
+        // 发送请求
+        sendBtn.addEventListener('click', sendRequest);
+
+        // 清除历史
+        clearBtn.addEventListener('click', function() {
+            if (confirm('确定要清除所有历史记录吗？')) {
+                requestHistory = [];
+                localStorage.setItem('httpTesterHistory', JSON.stringify(requestHistory));
+                renderHistory();
+            }
+        });
+
+        // 发送请求函数
+        async function sendRequest() {
+            const url = urlInput.value.trim();
+            const method = methodInput.value;
+            const headersText = headersInput.value.trim();
+            const body = bodyInput.value.trim();
+
+            if (!url) {
+                alert('请输入请求URL');
+                return;
+            }
+
+            // 禁用发送按钮
+            sendBtn.disabled = true;
+            sendBtn.textContent = '发送中...';
+
+            // 准备请求头
+            const headers = {};
+            if (headersText) {
+                const headerLines = headersText.split('\n');
+                headerLines.forEach(line => {
+                    const separatorIndex = line.indexOf(':');
+                    if (separatorIndex > 0) {
+                        const key = line.substring(0, separatorIndex).trim();
+                        const value = line.substring(separatorIndex + 1).trim();
+                        headers[key] = value;
+                    }
+                });
+            }
+
+            // 准备请求体
+            let requestBody = null;
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS' && body) {
+                // 尝试解析JSON，如果不是有效JSON则直接使用字符串
+                try {
+                    requestBody = JSON.parse(body);
+                } catch (e) {
+                    requestBody = body;
+                }
+            }
+
+            // 记录开始时间
+            const startTime = Date.now();
+
+            try {
+                const options = {
+                    method: method,
+                    headers: headers
+                };
+
+                if (requestBody) {
+                    if (typeof requestBody === 'object') {
+                        options.body = JSON.stringify(requestBody);
+                        // 如果没有设置Content-Type，默认设置为application/json
+                        if (!headers['Content-Type']) {
+                            options.headers['Content-Type'] = 'application/json';
+                        }
+                    } else {
+                        options.body = requestBody;
+                    }
+                }
+
+                const response = await fetch(url, options);
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+
+                // 更新响应信息
+                statusCode.textContent = response.status;
+                statusCode.className = 'status-code';
+
+                if (response.status >= 200 && response.status < 300) {
+                    statusCode.classList.add('status-2xx');
+                } else if (response.status >= 300 && response.status < 400) {
+                    statusCode.classList.add('status-3xx');
+                } else {
+                    statusCode.classList.add('status-4xx');
+                }
+
+                responseTime.textContent = duration;
+
+                // 处理响应头
+                responseHeaders.innerHTML = '';
+                response.headers.forEach((value, key) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${key}</td><td>${value}</td>`;
+                    responseHeaders.appendChild(row);
+                });
+
+                // 处理响应体
+                if (method === 'HEAD') {
+                    responseBody.textContent = 'HEAD请求没有响应体';
+                } else {
+                    try {
+                        const responseData = await response.json();
+                        responseBody.textContent = JSON.stringify(responseData, null, 2);
+                    } catch (e) {
+                        // 如果不是JSON，尝试作为文本读取
+                        const text = await response.text();
+                        responseBody.textContent = text || '空响应';
+                    }
+                }
+
+                // 添加到历史记录
+                addToHistory({
+                    url,
+                    method,
+                    status: response.status,
+                    duration,
+                    timestamp: new Date().toISOString()
+                });
+
+            } catch (error) {
+                console.error('请求失败:', error);
+                statusCode.textContent = 'Error';
+                statusCode.className = 'status-code status-4xx';
+                responseTime.textContent = '-';
+                responseBody.textContent = `请求失败: ${error.message}`;
+
+                // 清空响应头
+                responseHeaders.innerHTML = '';
+            } finally {
+                // 恢复发送按钮
+                sendBtn.disabled = false;
+                sendBtn.textContent = '发送请求';
+            }
+        }
+
+        // 添加到历史记录
+        function addToHistory(request) {
+            requestHistory.unshift(request);
+            // 只保留最近20条记录
+            if (requestHistory.length > 20) {
+                requestHistory = requestHistory.slice(0, 20);
+            }
+            localStorage.setItem('httpTesterHistory', JSON.stringify(requestHistory));
+            renderHistory();
+        }
+
+        // 渲染历史记录
+        function renderHistory() {
+            historyList.innerHTML = '';
+
+            if (requestHistory.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; padding: 20px; color: #95a5a6;">暂无历史记录</div>';
+                return;
+            }
+
+            requestHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <span class="history-method">${item.method}</span>
+                    <span class="history-url">${item.url}</span>
+                    <span class="history-status">${item.status} • ${item.duration}ms</span>
+                `;
+
+                historyItem.addEventListener('click', function() {
+                    urlInput.value = item.url;
+                    methodInput.value = item.method;
+
+                    // 更新方法选择器UI
+                    methodOptions.forEach(opt => {
+                        if (opt.getAttribute('data-method') === item.method) {
+                            opt.classList.add('active');
+                        } else {
+                            opt.classList.remove('active');
+                        }
+                    });
+
+                    // 更新请求体显示
+                    if (item.method === 'GET' || item.method === 'HEAD' || item.method === 'OPTIONS') {
+                        bodyGroup.style.display = 'none';
+                    } else {
+                        bodyGroup.style.display = 'block';
+                    }
+                });
+
+                historyList.appendChild(historyItem);
+            });
+        }
+    });
+</script>
+</body>
+</html>

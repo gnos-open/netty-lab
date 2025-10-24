@@ -1,0 +1,5 @@
+netty:
+  server:
+    websocket:
+      enabled: true
+      port: 8083

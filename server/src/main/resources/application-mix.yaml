@@ -1,0 +1,14 @@
+netty:
+  server:
+    http:
+      enabled: true
+      port: 8080
+    tcp:
+      enabled: true
+      port: 8081
+    udp:
+      enabled: true
+      port: 8082
+    websocket:
+      enabled: true
+      port: 8083
