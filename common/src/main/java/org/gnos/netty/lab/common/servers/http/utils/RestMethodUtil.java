@@ -19,7 +19,6 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class RestMethodUtil {
 
-
     public static void invoke(ChannelHandlerContext ctx, Map<String, String> header, PathMatcher.MatchResult pathResult, Map<String, Object> params, JSONObject jsonBody, boolean isHEAD) {
         Method method = pathResult.handleMethod().method();
         HttpController handler = pathResult.handleMethod().handler();
@@ -49,7 +48,6 @@ public class RestMethodUtil {
                 objects[i] = Convert.convert(pi.getType(), var);
             }
         }
-
 
         CompletableFuture.supplyAsync(() -> invoke(method, handler, objects))
                 .thenAccept(result -> {

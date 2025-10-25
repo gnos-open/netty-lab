@@ -29,12 +29,6 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(value = "netty.server.http.enabled", havingValue = "true")
 public class HttpServer {
 
-    @Value("${netty.server.http.port}")
-    int PORT;
-
-    @Autowired
-    RestHandlerManager restHandlerManager;
-
     private final CorsConfig corsConfig = CorsConfig
             .withAnyOrigin()
             .allowedRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS)
@@ -42,6 +36,10 @@ public class HttpServer {
             .allowCredentials()
             .maxAge(3600)
             .build();
+    @Value("${netty.server.http.port}")
+    int PORT;
+    @Autowired
+    RestHandlerManager restHandlerManager;
 
     @PostConstruct
     void start() throws Exception {

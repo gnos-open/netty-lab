@@ -28,7 +28,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
-// 获取请求方法和URI
+        // 获取请求方法和URI
         HttpMethod method = request.method();
         String uri = request.uri();
         String uriRaw = uri.split("\\?", 2)[0];

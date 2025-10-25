@@ -5,7 +5,7 @@
 
 ## 项目简介
 
-用netty实现一个简单的tcp/udp/websocket服务器逻辑，传输数据基于protobuf封装。
+用netty实现一个简单的http/tcp/udp/websocket服务器逻辑，传输数据基于protobuf封装。
 
 ## 使用技术
 
@@ -123,6 +123,8 @@ org.gnos.netty.lab.server.ServerApplication
 ```
 用你喜欢的方式运行客户端入口类：
 org.gnos.netty.lab.client.ClientApplication
+
+http测试打开浏览器或者api工具
 ```
 
 5. 输入测试命令
